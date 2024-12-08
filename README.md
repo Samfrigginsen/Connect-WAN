@@ -24,19 +24,3 @@
 1. **Run the tool**: Double-click the `.exe` file (or run the Python script).
 2. **Start Monitoring**: The program will begin monitoring the internet and reconnect automatically if needed.
 3. **Set it to Startup** *(optional)*: Add the program to Windows startup to ensure it runs automatically after boot.
-
----
-
-## Limitations
-- **Router-Specific**: This tool is only compatible with the TP-LINK TL-WR740N router.
-- **Browser-Specific**: Designed for the Brave or Chrome browsers.
-
----
-
-## Disclaimer
-This project is provided "as is" without warranty of any kind. Use it at your own risk. 
-
----
-
-## Contributions
-Feel free to submit issues or suggestions to improve the tool!
