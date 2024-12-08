@@ -13,18 +13,53 @@ from pywinauto import Desktop
 import pygetwindow as gw
 import pyautogui  # Add PyAutoGUI import
 import time
+import pystray
+from pystray import Icon, Menu, MenuItem
+from PIL import Image, ImageDraw
+import tkinter as tk
+
+
+# Function to minimize to tray
+def send_to_tray():
+    # Create an icon for the system tray
+    def create_image():
+        # Create a blank image with a circle (as a placeholder icon)
+        image = Image.new("RGB", (64, 64), color=(255, 255, 255))
+        draw = ImageDraw.Draw(image)
+        draw.ellipse((16, 16, 48, 48), fill=(0, 128, 255))
+        return image
+
+    def on_exit(icon, item):
+        icon.stop()
+        root.destroy()
+
+    def on_show(icon, item):
+        root.deiconify()  # Show the window again
+        icon.stop()
+
+    # Create the tray menu
+    menu = Menu(MenuItem("Show", on_show), MenuItem("Exit", on_exit))
+
+    # Create and start the tray icon
+    tray_icon = Icon("ConnectWAN", create_image(), "ConnectWAN", menu)
+    tray_icon.run_detached()
+    root.withdraw()  # Hide the main window
+
 
 # Section 2: Paths to Brave Browser and ChromeDriver
 brave_path = r"C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"
 driver_path = r"F:\Programming\chromedriver-win64\chromedriver.exe"
+
 
 # Section: Bring Browser to Top and Keep it Focused
 def bring_browser_to_top():
     try:
         # Get the browser window title
         windows = gw.getAllTitles()
-        browser_window = next((w for w in windows if "Brave" in w or "Chrome" in w), None)
-        
+        browser_window = next(
+            (w for w in windows if "Brave" in w or "Chrome" in w), None
+        )
+
         if browser_window:
             # Use pywinauto to set the window to stay on top
             app = Desktop(backend="uia").window(title=browser_window)
@@ -35,6 +70,7 @@ def bring_browser_to_top():
             print("Browser window not found.")
     except Exception as e:
         print(f"Error setting browser to top: {e}")
+
 
 # Section 3: Check internet connectivity
 def check_internet(url="http://www.google.com", timeout=5):
@@ -61,9 +97,8 @@ def find_and_click_connect_button(driver):
         time.sleep(1)  # Wait for the action to complete
 
         print("Pressed Tab 20 times and then Enter.")
-    
-        print("Reconnected to WAN successfully!")
 
+        print("Reconnected to WAN successfully!")
 
     except Exception as e:
         print(f"Error: {e}")
@@ -97,7 +132,6 @@ def connect_to_router():
 
         # Step 4: Call the function to find and click the "Connect" button
         find_and_click_connect_button(driver)
-
 
         # Wait for 5 seconds before closing the browser
         time.sleep(10)
@@ -186,6 +220,16 @@ log_box = scrolledtext.ScrolledText(
     frame, width=50, height=15, state=tk.DISABLED, font=("Courier", 10)
 )
 log_box.pack(pady=10)
+
+send_to_tray_button = tk.Button(
+    frame,
+    text="Send to Tray",
+    command=send_to_tray,
+    font=("Arial", 12),
+    bg="blue",
+    fg="white",
+)
+send_to_tray_button.pack(pady=10)
 
 # Initialize monitoring state
 monitoring = False
